@@ -20,6 +20,7 @@ jobs:
     container:
       image: alpine/git
     steps:
+      - run: git config --global --add safe.directory /__w/sync-local-dir-to-gcs-bucket/sync-local-dir-to-gcs-bucket
       - name: Checkout
         uses: actions/checkout@v3
         with:
