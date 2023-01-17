@@ -20,32 +20,21 @@ jobs:
     container:
       image: alpine/git
     steps:
-      - run: git config --global --add safe.directory /__w/sync-local-dir-to-gcs-bucket/sync-local-dir-to-gcs-bucket
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: main
-          fetch-depth: 0
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Bump version
-        uses: PaulHatch/semantic-version@v4.0.2
-        id: tag_version_main
-        with:
-          tag_prefix: "v"
-          major_pattern: "BREAKING CHANGE"
-          minor_pattern: "feat:"
-          format: "${major}.${minor}.${patch}"
-          namespace: main
-          change_path: "."
-          short_tags: false
-          bump_each_commit: true
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Tag Release (vX.Y.Z)
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-        run: |
-          git tag ${{ steps.tag_version_develop.outputs.version_tag }}
-          git push origin ${{ steps.tag_version_develop.outputs.version_tag }}
+    - uses: actions/checkout@v2
+
+    - uses: actions-ecosystem/action-get-latest-tag@v1
+      id: get-latest-tag
+
+    - uses: actions-ecosystem/action-bump-semver@v1
+      id: bump-semver
+      with:
+        current_version: ${{ steps.get-latest-tag.outputs.tag }}
+        level: minor
+
+    - uses: actions-ecosystem/action-push-tag@v1
+      with:
+        tag: ${{ steps.bump-semver.outputs.new_version }}
+        message: '${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
 
   # release:
   #   name: "Release"
