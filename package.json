@@ -1,0 +1,32 @@
+{
+  "name": "sync-dir-to-bucket",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Andrew Milam",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/storage": "^6.9.0",
+    "chokidar": "^3.5.3",
+    "crypto-md5": "^1.0.0",
+    "pkg": "^5.8.0"
+  },
+  "pkg": {
+    "scripts": "./*.js",
+    "targets": [
+      "node16-macos-x64",
+      "node16-linux-arm64",
+      "node16-win-x64"
+    ],
+    "outputPath": "./"
+  },
+  "bin": {
+    "myapp": "index.js"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "description": ""
+}
