@@ -26,7 +26,7 @@ jobs:
       uses: Instrument/github-tag-action@v1.0
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        BRANCH: master
+        BRANCH: main
         BUMP: major
 
   # release:
