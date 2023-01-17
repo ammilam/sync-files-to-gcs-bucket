@@ -1,0 +1,56 @@
+name: Node.js CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+
+      - run: npm ci
+      - run: npm install pkg -g
+      - run: pkg .
+
+  create-tag:
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: alpine/git
+    steps:
+    - uses: actions/checkout@v3
+    - name: Bump version and push tag
+      uses: Instrument/github-tag-action@v1.0
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        BRANCH: master
+        BUMP: major
+
+
+
+  # release:
+  #   name: "Release"
+  #   needs: create-tag
+  #   runs-on: "ubuntu-latest"
+  #   steps:
+  #     - name: "Create release"
+  #       uses: "actions/github-script@v5"
+  #       with:
+  #         github-token: "${{ secrets.GITHUB_TOKEN }}"
+  #         script: |
+  #           try {
+  #             await github.rest.repos.createRelease({
+  #               draft: false,
+  #               generate_release_notes: true,
+  #               name: ${{ needs.create-tag.outputs.new_tag }},
+  #               owner: context.repo.owner,
+  #               prerelease: false,
+  #               repo: context.repo.repo,
+  #               tag_name: ${{ needs.create-tag.outputs.new_tag }},
+  #             });
+  #           } catch (error) {
+  #             core.setFailed(error);
+  #           }
+
