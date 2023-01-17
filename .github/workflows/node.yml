@@ -26,6 +26,7 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Bump version
         uses: PaulHatch/semantic-version@v4.0.2
         id: tag_version_main
@@ -38,6 +39,7 @@ jobs:
           change_path: "."
           short_tags: false
           bump_each_commit: true
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Tag Release (vX.Y.Z)
         run: |
           git tag ${{ steps.tag_version_develop.outputs.version_tag }}
