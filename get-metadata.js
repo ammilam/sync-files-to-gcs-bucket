@@ -35,7 +35,7 @@ async function getFileMetadata(bucketName, localPathToFile, fileName) {
     if (localFileHash == remoteFileHash) {
       return "matches"
     } else {
-      console.log(`md5 doesn't match, uploading ${fileName} to ${bucketName}`)
+      console.log(`md5 doesn't match for "${fileName}", uploading new version to ${bucketName}`)
       return "no-match"
     }
   } catch (e) {
