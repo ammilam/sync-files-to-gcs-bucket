@@ -12,14 +12,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - id: bump
-      uses: zwaldowski/match-label-action@v4
+    - name: Bump version and push tag
+      id: bump
+      uses: hennejg/github-tag-action@v4.1.jh1
       with:
-        allowed: major,minor,patch
-        
-    - uses: zwaldowski/semver-release-action@v3
-      with:
-        bump: ${{ steps.bump.outputs.match }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Use Node.js
@@ -39,8 +35,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name:  ${{ steps.bump.outputs.match }}
-        release_name: Release ${{ steps.bump.outputs.match }}
+        tag_name:  ${{ steps.bump.outputs.new_tag }}
+        release_name: Release ${{ steps.bump.outputs.new_tag }}
         draft: false
         prerelease: false
         
