@@ -28,7 +28,7 @@ async function uploadFile(bucketName, localPathToFile, localFileName) {
     let name = response[0]['metadata']['name']
     let bucket = response[0]['metadata']['bucket']
     if (updated) {
-      console.log(`${name} successfully uploaded to ${bucket}`)
+      console.log(`new version "${name}" successfully uploaded to ${bucket}`)
     }
   })
 }
