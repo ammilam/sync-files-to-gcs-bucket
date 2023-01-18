@@ -5,6 +5,7 @@ const chokidar = require('chokidar');
 var args = process.argv.slice(2)
 let dir = args[0]
 let bucketName = args[1]
+let interval = args[2]
 
 // if arguments aren't passed in, exit
 if (!(dir || bucketName)) {
@@ -39,14 +40,20 @@ async function upload(bucketName, localPathToFile) {
 
 // main function that watches a local directory or files for changes, moves them to gcs
 function main() {
-  console.log(`watching ${dir} for changes to send to ${bucketName}`)
+  console.log(`watching ${dir} for changes to send to ${bucketName}${interval ? `will poll every ${interval} seconds` : ""}`)
   const watcher = chokidar.watch(dir, {
-    persistent: true
+    persistent: true,
+    useFsEvents: interval ? false : true,
+    usePolling: interval ? true : false,
+    interval: Number(interval),
   });
 
   // One-liner for current directory
   watcher
     .on('change', path => {
+      upload(bucketName, path)
+    })
+    .on('add', path => {
       upload(bucketName, path)
     })
 }
