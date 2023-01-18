@@ -14,6 +14,8 @@ jobs:
     
     - id: bump
       uses: zwaldowski/match-label-action@v4
+      with:
+        allowed: major,minor,patch
         
     - uses: zwaldowski/semver-release-action@v3
       with:
