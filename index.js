@@ -14,8 +14,8 @@ if (!(dir || bucketName)) {
 }
 
 // import local modules and their functions
-let cloudStorage = require('./cloud-storage')
-let metadata = require('./get-metadata')
+let cloudStorage = require('./src/cloud-storage/upload-to-bucket')
+let metadata = require('./src/cloud-storage/get-metadata')
 
 async function upload(bucketName, localPathToFile) {
   let localFileName = localPathToFile.match(/\/(.*)$/)[1]
