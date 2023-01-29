@@ -10,9 +10,6 @@ const {
 
 // Creates a client
 const storage = new Storage();
-// import modules
-const md5 = require('crypto-md5')
-let fs = require('fs')
 
 // create a file used to upload files to a gcs bucket
 async function uploadFile(bucketName, localPathToFile, localFileName) {
