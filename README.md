@@ -14,6 +14,5 @@ Download the latest zip file containing binaries from the Release and execute th
 ./sync-dir-to-bucket-* ./path/to/local/dir gcs-bucket-name 
 
 # for other os
-interval=300 type=cloud-storage ./sync-dir-to-bucket-* ./path/to/local/dir gcs-bucket-name
-
+interval=300 ./sync-dir-to-bucket-* ./path/to/local/dir gcs-bucket-name
 ```
