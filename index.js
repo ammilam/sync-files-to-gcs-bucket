@@ -16,7 +16,6 @@ var args = process.argv.slice(2)
 let dir = args[0]
 let bucketName = args[1]
 let sourceAgentPoolName = args[2]
-let projectId = sourceAgentPoolName.match(/projects\/(.*?)\/.*/)[1]
 let exe = filename.match(/.*\.js/) ? `node ${filename}` : filename
 
 
@@ -63,6 +62,9 @@ if (!dir || !bucketName) {
     `)
   process.exit(1)
 }
+
+let projectId = sourceAgentPoolName ? sourceAgentPoolName.match(/projects\/(.*?)\/.*/)[1] : ""
+
 
 // import local modules and their functions
 let cloudStorage = require('./src/cloud-storage/upload-to-bucket')
