@@ -74,7 +74,9 @@ let storageTransferService = require('./src/storage-transfer-service/posix-reque
 async function switchUpload(bucketName, localPathToFile, localFileName, projectId, sourceAgentPoolName) {
   switch (true) {
     case type == "transfer-service":
-      storageTransferService.createStorageTransferRequest(localPathToFile, bucketName, projectId, sourceAgentPoolName);
+      // storageTransferService.createStorageTransferRequest(localPathToFile, bucketName, projectId, sourceAgentPoolName);
+      console.log("this feature is disabledat this time")
+      process.exit(0)
       break;
     default:
       cloudStorage.uploadFile(bucketName, localPathToFile, localFileName)
