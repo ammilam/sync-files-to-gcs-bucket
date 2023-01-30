@@ -9,16 +9,18 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/storage": "^6.9.0",
+    "@google-cloud/storage-transfer": "^2.2.1",
     "chokidar": "^3.5.3",
     "crypto-md5": "^1.0.0",
+    "dotenv": "^16.0.3",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
     "pkg": "^5.8.0"
   },
   "pkg": {
-    "scripts": "./*.js",
+    "scripts": "./src/*.js",
     "targets": [
-      "node16-macos-x64",
-      "node16-linux-arm64",
-      "node16-win-x64"
+      "node16-macos-x64"
     ],
     "outputPath": "./"
   },
@@ -26,7 +28,7 @@
     "myapp": "index.js"
   },
   "directories": {
-    "test": "test"
+    "src": "src"
   },
   "description": ""
 }
