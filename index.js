@@ -15,14 +15,13 @@ let type = process.env.type ? process.env.type : "cloud-storage"
 var args = process.argv.slice(2)
 let dir = args[0]
 let bucketName = args[1]
-let projectId = args[2]
-let sourceAgentPoolName = args[3]
+let sourceAgentPoolName = args[2]
+let projectId = sourceAgentPoolName.match(/projects\/(.*?)\/.*/)[1]
 let exe = filename.match(/.*\.js/) ? `node ${filename}` : filename
 
 
 if (args.length == 0) {
   console.error(`
-
   You must pass in at least two arguments
 
   Usage:
@@ -32,31 +31,36 @@ if (args.length == 0) {
       type=cloud-storage ${exe} ./path/to/local/file gcs-bucket-name
 
     Storage Transfer Service:
-        type=transfer-service interval=300 ${exe} ./path/to/local/file gcs-bucket-name gcp-project-id-1234 projects/gcp-project-id-1234/agentPools/transfer_service_default
-        `)
+      type=transfer-service interval=300 ${exe} ./path/to/local/file gcs-bucket-name projects/gcp-project-id-1234/agentPools/default
+      `)
 
   process.exit(1)
 }
 
 // make sure if 'type' variable is set that the input is valid
 if (!type.match(/cloud\-storage|transfer\-service/)) {
-  console.error("you must set the 'type' variable to either cloud-storage or transfer-service")
-  console.error(`\ntype=transfer-service interval=300 ${exe} ./path/to/local/file gcs-bucket-name gcp-project-id-1234 projects/gcp-project-id-1234/agentPools/transfer_service_default`)
+  console.error(`
+    you must set the 'type' variable to either cloud-storage or transfer-service
+    type=transfer-service interval=300 ${exe} ./path/to/local/file gcs-bucket-name projects/gcp-project-id-1234/agentPools/default
+    `)
   process.exit(1)
 }
 
 
-if (type.match(/transfer-service/) && !(projectId == "" || sourceAgentPoolName == "")) {
-  console.error("when using storage transfer service, a project id must be passed in as the 3rd argument and storage agent pool name must be passed in on the 4th")
-  console.error(`\ntype=transfer-service interval=300 ${exe} ./path/to/local/file gcs-bucket-name gcp-project-id-1234 projects/gcp-project-id-1234/agentPools/transfer_service_default`)
-
+if (type.match(/transfer-service/) && !sourceAgentPoolName) {
+  console.error(`
+    when using storage transfer service, a storage agent pool name must be passed in
+    type=transfer-service interval=300 ${exe} ./path/to/local/file gcs-bucket-name projects/gcp-project-id-1234/agentPools/default
+  `)
   process.exit(1)
 }
 
 // if arguments aren't passed in, exit
 if (!dir || !bucketName) {
-  console.error("you must supply both a source directory and a gcs bucket name")
-  console.error(`interval=300 ${exe} ./path/to/local/file gcs-bucket-name`)
+  console.error(`
+    you must supply both a source directory and a gcs bucket name
+    interval=300 ${exe} ./path/to/local/file gcs-bucket-name
+    `)
   process.exit(1)
 }
 
@@ -68,7 +72,7 @@ let storageTransferService = require('./src/storage-transfer-service/posix-reque
 async function switchUpload(bucketName, localPathToFile, localFileName, projectId, sourceAgentPoolName) {
   switch (true) {
     case type.match(/transfer\-service/):
-      storageTransferService.createStorageTransferRequest();
+      storageTransferService.createStorageTransferRequest(localPathToFile, bucketName, projectId, sourceAgentPoolName);
       break;
     default:
       cloudStorage.uploadFile(bucketName, localPathToFile, localFileName)
@@ -84,17 +88,13 @@ async function upload(bucketName, localPathToFile) {
   let bucketStatus = await metadata.getBucketMetadata(bucketName)
 
   if (bucketStatus) {
-
     let fileStatus = await metadata.getFileMetadata(bucketName, localPathToFile, localFileName)
-
-    if (fileStatus === "matches") {
-
-      // do nothing
-    } else if (fileStatus == "no-match") {
-      switchUpload(bucketName, localPathToFile, localFileName, projectId, sourceAgentPoolName)
-      cloudStorage.uploadFile(bucketName, localPathToFile, localFileName)
-    } else {
-      switchUpload(bucketName, localPathToFile, localFileName, projectId, sourceAgentPoolName)
+    switch (true) {
+      case fileStatus === "matches":
+        // do nothing;
+        break;
+      default:
+        switchUpload(bucketName, localPathToFile, localFileName, projectId, sourceAgentPoolName)
     }
   } else {
     console.log("bucket doesn't exist")
