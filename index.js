@@ -73,7 +73,7 @@ let storageTransferService = require('./src/storage-transfer-service/posix-reque
 
 async function switchUpload(bucketName, localPathToFile, localFileName, projectId, sourceAgentPoolName) {
   switch (true) {
-    case type.match(/transfer\-service/):
+    case type == "transfer-service":
       storageTransferService.createStorageTransferRequest(localPathToFile, bucketName, projectId, sourceAgentPoolName);
       break;
     default:
