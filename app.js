@@ -19,6 +19,8 @@ const exe = filename.match(/.*\.js/) ? `node ${filename}` : filename;
 if (!dir || !bucketName) {
   console.error(`
     you must supply both a source directory and a gcs bucket name
+    
+    ${exe} ./path/to/local/file gcs-bucket-name
     interval=300 ${exe} ./path/to/local/file gcs-bucket-name
     `);
   process.exit(1);
