@@ -6,7 +6,7 @@ async function uploadFile(bucketName, localPathToFile, localFileName) {
   try {
     const [{ metadata: { updated, name, bucket } }] = await storage.bucket(bucketName).upload(localPathToFile, options);
     if (updated) {
-      console.log(`new version "${name}" successfully uploaded to ${bucket}`);
+      console.log(`new version "${localPathToFile}" successfully uploaded to ${bucket}`);
     }
   } catch (error) {
     throw error;
