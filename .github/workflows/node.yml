@@ -3,11 +3,7 @@ on:
   push:
     branches:
       - main
-    paths:
-      - src/**
-      - package.json
-      - app.js
-      - .github/workflows
+
 jobs:
   release:
     permissions:
