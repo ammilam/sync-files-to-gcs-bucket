@@ -18,7 +18,7 @@ gcloud auth application-default login
 #### Service Account JSON Key
 
 ```bash
-# authenticate using a service account JWT
+# authenticate using a service account json key
 export GOOGLE_APPLICATION_CREDENTIALS=./key/to/service/account.json
 ```
 
