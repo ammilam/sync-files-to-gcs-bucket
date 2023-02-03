@@ -1,6 +1,6 @@
 # Sync Local Directory To Google Cloud Storage Bucket
 
-This solution is intended to be used to sync files created or updated inside of a local directory to a GCS Bucket.
+This solution is intended to be used to sync files created or updated inside of a local or nfs filesystem to a GCS Bucket.
 
 ## Prerequisites
 
@@ -26,14 +26,17 @@ export GOOGLE_APPLICATION_CREDENTIALS=./key/to/service/account.json
 
 Download the [zip](https://github.com/ammilam/sync-local-dir-to-gcs-bucket/releases/latest/download/sync-dir-to-bucket.zip) containing executables from the latest Release and execute the appropriate binary based off the system architecture. The executable accepts the following flags:
 
-- dir => (required) path to the local directory to sync files from
+- path => (required) path to the local file or directory to sync to gcp, multiple can be specified
 - bucket => (required) google projectId
 - interval => (optional) sets the interval in seconds to poll the directory for changes
 
 ```bash
 # on mac os, no interval is required as it responds to file system events
-./sync-dir-to-bucket-*  --dir=./path/to/local/file --bucket=gcs-bucket-name
+./sync-to-bucket  --path=./path/to/local/file --bucket=gcs-bucket-name
 
 # for other os
-./sync-dir-to-bucket-* --dir=./path/to/local/file --bucket=gcs-bucket-name --interval=900
+./sync-to-bucket --path=./path/to/local/file --bucket=gcs-bucket-name --interval=900
+
+# specifying multiple paths
+./sync-to-bucket --path=./path/to/local/file --path=./path/to/local/another/file.txt --bucket=gcs-bucket-name --interval=900
 ```

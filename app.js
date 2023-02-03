@@ -3,15 +3,15 @@ const chokidar = require("chokidar");
 const { config } = require("dotenv");
 config();
 const fs = require("fs");
-const path = require("path");
-const filename = path.basename(__filename);
+const pa = require("path");
+const filename = pa.basename(__filename);
 const args = require('yargs').argv;
 
 
 // if set, grabs the value from the type variable when executed. sets default if not present
 
 // create a variables from arguments
-const dir = args.dir
+const path = args.path
 const project = args.project
 const bucket = args.bucket
 const interval = args.interval
@@ -19,12 +19,13 @@ const interval = args.interval
 const type = args.type || "cloud-storage";
 const exe = filename.match(/.*\.js/) ? `node ${filename}` : filename;
 
-if (!dir || !bucket) {
+if (!path||!bucket) {
   console.error(`
-    you must supply a source directory, a google project, and a gcs bucket name
+    you must supply at least one source directory, and a gcs bucket name
 
-    ${exe} --dir=./path/to/local/file --bucket=gcs-bucket-name
-    ${exe} --dir=./path/to/local/file --bucket=gcs-bucket-name --interval=900
+    ${exe} --path=./path/to/local/file --bucket=gcs-bucket-name
+    ${exe} --path=./path/to/local/file --path=./path/to/local/another/file.txt --bucket=gcs-bucket-name
+    ${exe} --path=./path/to/local/file --bucket=gcs-bucket-name --interval=900
     `);
   process.exit(1);
 }
@@ -62,22 +63,23 @@ async function upload(bucket, localPathToFile) {
 }
 
 // main function that watches a local directory or files for changes, moves them to gcs
-async function watchDirectory(dir, bucket, interval) {
-  console.log(`Watching ${dir} for changes to send to ${bucket}. Polling interval: ${interval ? `${interval} seconds` : 'FS events'}.`);
-  const watcher = chokidar.watch(dir, {
+async function watchDirectory(path, bucket, interval) {
+  console.log(`Watching ${path} for changes to send to ${bucket}. Polling interval: ${interval ? `${interval} seconds` : 'FS events'}.`);
+
+  const watcher = chokidar.watch(path, {
     persistent: true,
     useFsEvents: !interval,
     usePolling: !!interval,
     interval: Number(interval),
   });
 
-  watcher.on('change', path => upload(bucket, path));
-  watcher.on('add', path => upload(bucket, path));
+  watcher.on('change', p => upload(bucket, p));
+  watcher.on('add', p => upload(bucket, p));
 }
 
 async function main() {
   await auth.googleAuth()
-  await watchDirectory(dir, bucket, interval);
+  await watchDirectory(path, bucket, interval);
 }
 
 main().catch(console.error);
