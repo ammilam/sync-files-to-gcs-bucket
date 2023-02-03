@@ -11,11 +11,12 @@
     "@google-cloud/storage": "^6.9.0",
     "@google-cloud/storage-transfer": "^2.2.1",
     "chokidar": "^3.5.3",
-    "crypto-md5": "^1.0.0",
     "dotenv": "^16.0.3",
     "fs": "^0.0.1-security",
+    "google-auth-library": "^8.7.0",
     "path": "^0.12.7",
-    "pkg": "^5.8.0"
+    "pkg": "^5.8.0",
+    "yargs": "^17.6.2"
   },
   "pkg": {
     "scripts": "./src/*.js",
