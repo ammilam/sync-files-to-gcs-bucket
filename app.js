@@ -1,27 +1,30 @@
 // module used to watch directories
 const chokidar = require("chokidar");
+
+// module used for slurp in environment variables
 const { config } = require("dotenv");
 config();
+
+// fs module for interacting with the filesystem
 const fs = require("fs");
 const pa = require("path");
 const filename = pa.basename(__filename);
 const args = require('yargs').argv;
 
-
-// if set, grabs the value from the type variable when executed. sets default if not present
-
-// create a variables from arguments
+// create a variables from flags passed in at runtime
 const path = args.path
 const project = args.project
 const bucket = args.bucket
 const interval = args.interval
-
 const type = args.type || "cloud-storage";
+
+// used to determine the name of the file being ran
 const exe = filename.match(/.*\.js/) ? `node ${filename}` : filename;
 
+// ensure proper flags are passed in at runtime
 if (!path||!bucket) {
   console.error(`
-    you must supply at least one source directory, and a gcs bucket name
+    you must supply at least one path, and a gcs bucket name
 
     ${exe} --path=./path/to/local/file --bucket=gcs-bucket-name
     ${exe} --path=./path/to/local/file --path=./path/to/local/another/file.txt --bucket=gcs-bucket-name
@@ -29,7 +32,6 @@ if (!path||!bucket) {
     `);
   process.exit(1);
 }
-
 
 // import local modules
 const auth = require("./src/google-auth/auth")
@@ -62,7 +64,7 @@ async function upload(bucket, localPathToFile) {
   }
 }
 
-// main function that watches a local directory or files for changes, moves them to gcs
+// function that watches paths passed in via the --path flag at runtime
 async function watchDirectory(path, bucket, interval) {
   console.log(`Watching ${path} for changes to send to ${bucket}. Polling interval: ${interval ? `${interval} seconds` : 'FS events'}.`);
 
@@ -77,6 +79,7 @@ async function watchDirectory(path, bucket, interval) {
   watcher.on('add', p => upload(bucket, p));
 }
 
+// main function, will auth with google and then invoke the watchDirectory function
 async function main() {
   await auth.googleAuth()
   await watchDirectory(path, bucket, interval);
