@@ -8,6 +8,7 @@
   "author": "Andrew Milam",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/secret-manager": "^4.2.0",
     "@google-cloud/storage": "^6.9.0",
     "@google-cloud/storage-transfer": "^2.2.1",
     "chokidar": "^3.5.3",
