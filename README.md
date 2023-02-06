@@ -1,6 +1,6 @@
-# Sync Local Directory To Google Cloud Storage Bucket
+# Sync To GCP
 
-This solution is intended to be used to sync files created or updated inside of a local or nfs filesystem to a GCS Bucket.
+This repo is contains source code for a commandline utility that is used to sync files on a local or nfs filesystem to GCP. Currently this tool can sync to Google Cloud Storage Buckets and Google Secrets Manager Secrets.
 
 ## Prerequisites
 
@@ -24,19 +24,46 @@ export GOOGLE_APPLICATION_CREDENTIALS=./key/to/service/account.json
 
 ## Usage
 
-Download the [zip](https://github.com/ammilam/sync-local-dir-to-gcs-bucket/releases/latest/download/sync-dir-to-bucket.zip) containing executables from the latest Release and execute the appropriate binary based off the system architecture. This application accepts the following flags:
+Download the [zip](https://github.com/ammilam/sync-local-dir-to-gcs-bucket/releases/latest/download/sync-dir-to-bucket.zip) containing executables from the latest Release and execute the appropriate binary based off the system architecture. Depending on the intended destination of the local file and/or its contents, refer to [Google Cloud Storage](#google-cloud-storage) or [Google Secret Manager](#google-secret-manager-secret).
+
+### Google Cloud Storage
+
+When syncing to Google Cloud Storage, the following flags are supported:
 
 - path => (required) path to the local file or directory to sync to gcp, multiple can be specified
 - bucket => (required) google projectId
 - interval => (optional) sets the interval in seconds to poll the directory for changes
+- type => (optional) accepts either cloud-storage or secret-manager
 
 ```bash
+#########################
+## -type=cloud-storage ##
+#########################
 # on mac os, no interval is required as it responds to file system events
-./sync-to-bucket  --path=./path/to/local/dir --bucket=gcs-bucket-name
+./sync-to-gcp  --path=./path/to/local/dir --bucket=gcs-bucket-name
 
 # for other os
-./sync-to-bucket --path=./path/to/local/dir --bucket=gcs-bucket-name --interval=900
+./sync-to-gcp --path=./path/to/local/dir --bucket=gcs-bucket-name --interval=900
 
 # specifying multiple paths
-./sync-to-bucket --path=./path/to/local/file --path=./path/to/another/file.txt --bucket=gcs-bucket-name --interval=900
+./sync-to-gcp --path=./path/to/local/file.txt --path=./path/to/another/file.txt --bucket=gcs-bucket-name --interval=900
+
+```
+
+### Google Secret Manager Secret
+
+When syncing to a Google Secret Manager Secret, the following flags are supported:
+
+- path => (required) path to a single local file, directories are not supported
+- secret => (required for secret-manager) a secret manager secret name
+- project => (required for secret-manager) the google project id containing the secret manager secret
+- interval => (optional) sets the interval in seconds to poll the directory for changes
+- type => (optional) accepts either cloud-storage or secret-manager
+
+```bash
+##########################
+## -type=secret-manager ##
+##########################
+# only accepts files, not folders
+./sync-to-gcp --path=./path/to/cert.pem --secret=private-key --project=a-gcp-project-1234
 ```
