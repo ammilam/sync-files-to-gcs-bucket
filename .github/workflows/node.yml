@@ -42,6 +42,16 @@ jobs:
         release_name: Release ${{ steps.tag_version.outputs.new_tag }}
         draft: false
         prerelease: false
+    - name: Create Latest
+      id: create_latest_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name:  latest
+        release_name: Latest Release
+        draft: false
+        prerelease: false
 
 #   - name: Upload Release Asset
 #       id: upload-release-asset
@@ -60,5 +70,14 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: sync-to-gcp*
         tag: ${{ steps.tag_version.outputs.new_tag }}
+        overwrite: true
+        file_glob: true
+        
+    - name: Upload binaries to latest release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: sync-to-gcp*
+        tag: latest
         overwrite: true
         file_glob: true
