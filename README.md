@@ -24,7 +24,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=./key/to/service/account.json
 
 ## Usage
 
-Download the [zip](https://github.com/ammilam/sync-local-dir-to-gcs-bucket/releases/latest/download/sync-dir-to-bucket.zip) containing executables from the latest Release and execute the appropriate binary based off the system architecture. Depending on the intended destination of the local file and/or its contents, refer to [Google Cloud Storage](#google-cloud-storage) or [Google Secret Manager](#google-secret-manager-secret).
+Download a binary from the [latest release](https://github.com/ammilam/sync-to-gcp/releases/tag/latest). Depending on the intended destination of the local file and/or its contents, refer to [Google Cloud Storage](#google-cloud-storage) or [Google Secret Manager](#google-secret-manager-secret).
 
 ### Google Cloud Storage
 
