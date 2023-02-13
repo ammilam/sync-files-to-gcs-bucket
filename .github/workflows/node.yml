@@ -53,3 +53,12 @@ jobs:
         asset_path: ./sync-to-gcp.zip
         asset_name: sync-to-gcp.zip
         asset_content_type: application/zip
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ./sync-to-gcp*
+        tag: ${{ steps.tag_version.outputs.new_tag }}
+        overwrite: true
+        file_glob: true
