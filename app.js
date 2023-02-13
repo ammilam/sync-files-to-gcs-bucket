@@ -42,17 +42,18 @@ if (type === "secret-manager" && (!secret || !project || !path)) {
 }
 
 // import local modules
-const auth = require("./src/google-auth/auth")
 const cloudStorage = require("./src/cloud-storage/upload-to-bucket");
 const metadata = require("./src/cloud-storage/get-metadata");
 const storageTransferService = require("./src/storage-transfer-service/posix-request");
 const secretManager = require("./src/secret-manager/add-secret-version")
+const auth = require("./src/google-auth/auth")
+
 // function to upload file to a bucket
 async function upload(bucket, localPathToFile) {
   const localFileName = localPathToFile.match(/\/(.*)$/)[1];
   const bucketStatus = await metadata.getBucketMetadata(bucket);
   const localFileStats = fs.statSync(localPathToFile);
-
+  const fileStatus = await metadata.getFileMetadata(bucket, localPathToFile, localFileName);
   if (type === "secret-manager") {
     if (localFileStats.isDirectory()) {
       console.error(`
@@ -67,7 +68,7 @@ async function upload(bucket, localPathToFile) {
     if (bucketStatus) {
       // invoke getFileMetadata function to check if the md5 hash for the local file
       // matches the md5 hash of the object in the gcs bucket
-      if (fileStatus !== "matches") {
+      if (localFileStats !== "matches") {
         if (type === "transfer-service") {
           console.log("this feature is disabled at this time");
           process.exit(0);
