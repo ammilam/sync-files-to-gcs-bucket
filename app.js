@@ -68,7 +68,7 @@ async function upload(bucket, localPathToFile) {
     if (bucketStatus) {
       // invoke getFileMetadata function to check if the md5 hash for the local file
       // matches the md5 hash of the object in the gcs bucket
-      if (localFileStats !== "matches") {
+      if (fileStatus !== "matches") {
         if (type === "transfer-service") {
           console.log("this feature is disabled at this time");
           process.exit(0);
