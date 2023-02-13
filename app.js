@@ -46,6 +46,8 @@ const cloudStorage = require("./src/cloud-storage/upload-to-bucket");
 const metadata = require("./src/cloud-storage/get-metadata");
 const storageTransferService = require("./src/storage-transfer-service/posix-request");
 const secretManager = require("./src/secret-manager/add-secret-version")
+const auth = require("./src/google-auth/auth")
+
 // function to upload file to a bucket
 async function upload(bucket, localPathToFile) {
   const localFileName = localPathToFile.match(/\/(.*)$/)[1];
