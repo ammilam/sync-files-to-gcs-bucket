@@ -36,9 +36,9 @@ When syncing to Google Cloud Storage, the following flags are supported:
 - type => (optional) accepts either cloud-storage or secret-manager
 
 ```bash
-#########################
-## -type=cloud-storage ##
-#########################
+##########################
+## --type=cloud-storage ##
+##########################
 # on mac os, no interval is required as it responds to file system events
 ./sync-to-gcp  --path=./path/to/local/dir --bucket=gcs-bucket-name
 
@@ -61,9 +61,9 @@ When syncing to a Google Secret Manager Secret, the following flags are supporte
 - type => (optional) accepts either cloud-storage or secret-manager
 
 ```bash
-##########################
-## -type=secret-manager ##
-##########################
+###########################
+## --type=secret-manager ##
+###########################
 # only accepts files, not folders
 ./sync-to-gcp --path=./path/to/cert.pem --secret=private-key --project=a-gcp-project-1234
 ```
