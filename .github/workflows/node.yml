@@ -28,9 +28,9 @@ jobs:
     - run: npm ci
     - run: npm install pkg -g
     - run: pkg .
-    - name: Build project # This would actually build your project, using zip for an example artifact
-      run: |
-        zip --junk-paths -m sync-to-gcp.zip *sync-to-gcp*
+#     - name: Build project # This would actually build your project, using zip for an example artifact
+#       run: |
+#         zip --junk-paths -m sync-to-gcp.zip *sync-to-gcp*
 
     - name: Create Release
       id: create_release
