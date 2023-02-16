@@ -2,9 +2,11 @@ const crypto = require('crypto');
 const fs = require('fs');
 const { Storage } = require('@google-cloud/storage');
 
-const storage = new Storage();
 
-async function getFileMetadata(bucketName, localPath, fileName) {
+async function getFileMetadata(bucketName, localPath, fileName, keyFile) {
+  const storage = new Storage({
+    keyFile
+  });
   try {
     const [metadata] = await storage.bucket(bucketName).file(fileName).getMetadata();
     const localContent = fs.readFileSync(localPath);
@@ -16,7 +18,10 @@ async function getFileMetadata(bucketName, localPath, fileName) {
   }
 }
 
-async function getBucketMetadata(bucketName) {
+async function getBucketMetadata(bucketName, keyFile) {
+  const storage = new Storage({
+    keyFile
+  });
   try {
     const [metadata] = await storage.bucket(bucketName).getMetadata();
     return metadata;

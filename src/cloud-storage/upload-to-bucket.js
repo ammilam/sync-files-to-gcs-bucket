@@ -1,7 +1,10 @@
 const { Storage } = require('@google-cloud/storage');
-const storage = new Storage();
 
-async function uploadFile(bucketName, localPathToFile, localFileName) {
+
+async function uploadFile(bucketName, localPathToFile, localFileName, keyFile) {
+  const storage = new Storage({
+    keyFile
+  });
   const options = { destination: localFileName };
   try {
     const [{ metadata: { updated, name, bucket } }] = await storage.bucket(bucketName).upload(localPathToFile, options);
