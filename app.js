@@ -1,12 +1,12 @@
 // module used to watch directories
 const chokidar = require("chokidar");
-const keyFile = process.env.GOOGLE_APPLICATION_CREDENTIALS
 // module used for slurp in environment variables
 const { config } = require("dotenv");
 config();
 
 // fs module for interacting with the filesystem
 const fs = require("fs");
+const keyFile = process.env.GOOGLE_APPLICATION_CREDENTIALS
 const pa = require("path");
 const filename = pa.basename(__filename);
 const args = require('yargs').argv;
