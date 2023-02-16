@@ -1,10 +1,13 @@
 const fs = require("fs");
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 // Create a client instance of the Google Cloud Secret Manager service
-const client = new SecretManagerServiceClient();
 
 // Helper function to get the latest secret version
-async function getLatestSecret(project, secret) {
+async function getLatestSecret(project, secret, keyFile) {
+    const client = new SecretManagerServiceClient({
+        keyFile
+    });
+
     // Access the latest version of the specified secret
     const [version] = await client.accessSecretVersion({
         name: `projects/${project}/secrets/${secret}/versions/latest`,
@@ -13,7 +16,11 @@ async function getLatestSecret(project, secret) {
     return version.payload.data.toString()
 }
 // Helper function to add a new secret version
-async function addSecretVersion(project, secret, payload) {
+async function addSecretVersion(project, secret, payload, keyFile) {
+    const client = new SecretManagerServiceClient({
+        keyFile
+    });
+
     // Add a new version of the secret with the given payload
     const [version] = await client.addSecretVersion({
         parent: `projects/${project}/secrets/${secret}`,
