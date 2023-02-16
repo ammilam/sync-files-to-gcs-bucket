@@ -1,6 +1,6 @@
 // module used to watch directories
 const chokidar = require("chokidar");
-
+const keyfile = process.env.GOOGLE_APPLICATION_CREDENTIALS
 // module used for slurp in environment variables
 const { config } = require("dotenv");
 config();
@@ -49,11 +49,11 @@ const secretManager = require("./src/secret-manager/add-secret-version")
 const auth = require("./src/google-auth/auth")
 
 // function to upload file to a bucket
-async function upload(bucket, localPathToFile) {
+async function upload(bucket, localPathToFile, keyFile) {
   const localFileName = localPathToFile.match(/\/(.*)$/)[1];
-  const bucketStatus = await metadata.getBucketMetadata(bucket);
+  const bucketStatus = await metadata.getBucketMetadata(bucket, keyFile);
   const localFileStats = fs.statSync(localPathToFile);
-  const fileStatus = await metadata.getFileMetadata(bucket, localPathToFile, localFileName);
+  const fileStatus = await metadata.getFileMetadata(bucket, localPathToFile, localFileName, keyFile);
   if (type === "secret-manager") {
     if (localFileStats.isDirectory()) {
       console.error(`
@@ -61,7 +61,7 @@ async function upload(bucket, localPathToFile) {
       `)
       process.exit(1)
     } else {
-      await secretManager.addSecretVersion(project, secret, localPathToFile)
+      await secretManager.addSecretVersion(project, secret, localPathToFile, keyFile)
     }
   } else {
     // check if gcs bucket exists
@@ -74,7 +74,7 @@ async function upload(bucket, localPathToFile) {
           process.exit(0);
         }
         else {
-          cloudStorage.uploadFile(bucket, localPathToFile, localFileName);
+          cloudStorage.uploadFile(bucket, localPathToFile, localFileName, keyFile);
         }
       }
     } else {
