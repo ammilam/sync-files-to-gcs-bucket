@@ -1,6 +1,6 @@
 // module used to watch directories
 const chokidar = require("chokidar");
-const keyfile = process.env.GOOGLE_APPLICATION_CREDENTIALS
+const keyFile = process.env.GOOGLE_APPLICATION_CREDENTIALS
 // module used for slurp in environment variables
 const { config } = require("dotenv");
 config();
@@ -84,7 +84,7 @@ async function upload(bucket, localPathToFile, keyFile) {
 }
 
 // function that watches paths passed in via the --path flag at runtime
-async function watchDirectory(path, bucket, interval, project, secret) {
+async function watchDirectory(path, bucket, interval, project, secret, keyFile) {
   console.log(`Watching ${path} for changes to send to ${bucket||secret}. Polling interval: ${interval ? `${interval} seconds` : 'FS events'}.`);
 
   const watcher = chokidar.watch(path, {
@@ -94,15 +94,15 @@ async function watchDirectory(path, bucket, interval, project, secret) {
     interval: Number(interval),
   });
 
-  watcher.on('change', p => upload(bucket, p, project, secret));
-  watcher.on('add', p => upload(bucket, p, project, secret));
+  watcher.on('change', p => upload(bucket, p, project, secret, keyFile));
+  watcher.on('add', p => upload(bucket, p, project, secret, keyFile));
 }
 
 
 // main function, will auth with google and then invoke the watchDirectory function
 async function main() {
   // await auth.googleAuth()
-  await watchDirectory(path, bucket, interval, project, secret);
+  await watchDirectory(path, bucket, interval, project, secret, keyFile);
 }
 
 main().catch(console.error);
