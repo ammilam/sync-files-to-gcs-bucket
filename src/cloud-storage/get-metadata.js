@@ -20,12 +20,13 @@ async function getFileMetadata(bucketName, localPath, fileName, keyFile) {
 
 async function getBucketMetadata(bucketName, keyFile) {
   const storage = new Storage({
-    keyFile
+    keyFile,
   });
   try {
     const [metadata] = await storage.bucket(bucketName).getMetadata();
     return metadata;
   } catch (error) {
+    console.log(error['errors'][0]['message'])
     return false;
   }
 }
