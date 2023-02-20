@@ -30,17 +30,6 @@ if (path === "./") {
       or sub directory designation is not supported
       `)
   process.exit(1)
-} else if (path.length > 1) {
-  path.forEach(p => {
-    if (p === "./") {
-      console.log(`
-      error on: ${path}
-      referencing the current working directory without an explicit file,
-      or sub directory designation is not supported
-      `)
-      process.exit(1)
-    }
-  })
 }
 
 // ensure proper flags are passed in at runtime
@@ -71,7 +60,7 @@ const auth = require("./src/google-auth/auth")
 
 // function to upload file to a bucket
 async function upload(bucket, localPathToFile, keyFile) {
-  const localFileName = localPathToFile.match(/^(\.\/)?([\w-]+\/)*([\w-]+\.\w+|\w+|\.\w+)?$/)[1];
+  const localFileName = localPathToFile.match(/^(.+)\/([^\/]+)$/)[1];
   const bucketStatus = await metadata.getBucketMetadata(bucket, keyFile);
   const localFileStats = fs.statSync(localPathToFile);
   const fileStatus = await metadata.getFileMetadata(bucket, localPathToFile, localFileName, keyFile);
