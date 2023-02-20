@@ -9,7 +9,7 @@ env:
   
 jobs:
   release:
-    permissions: read-all|write-all
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
