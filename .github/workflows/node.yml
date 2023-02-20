@@ -9,12 +9,7 @@ env:
   
 jobs:
   release:
-    permissions:
-      actions: read
-      contents: write
-      security-events: write
-      pull-requests: read
-      packages: write
+    permissions: read-all|write-all
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
