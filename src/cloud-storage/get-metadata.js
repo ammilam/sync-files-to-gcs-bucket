@@ -26,7 +26,7 @@ async function getBucketMetadata(bucketName, keyFile) {
     const [metadata] = await storage.bucket(bucketName).getMetadata();
     return metadata;
   } catch (error) {
-    console.log(error['errors'][0]['message'])
+    console.log(error)
     return false;
   }
 }
