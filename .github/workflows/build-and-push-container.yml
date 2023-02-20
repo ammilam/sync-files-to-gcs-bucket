@@ -1,9 +1,8 @@
 name: Create and publish a Docker image
 
 on:
-  workflow_run:
-    workflows: [Node.js CI]
-    types: [completed]
+  repository_dispatch:
+    types: [release-output]
 
 env:
   REGISTRY: ghcr.io
@@ -38,5 +37,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ github.event.release }}
           labels: ${{ steps.meta.outputs.labels }}
