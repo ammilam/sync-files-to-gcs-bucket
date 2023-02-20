@@ -62,5 +62,5 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         event-type: release-output
-        release: ${{ steps.tag_version.outputs.new_tag }}
+        client-payload: '{"release": "${{ steps.tag_version.outputs.new_tag }}"}'
   
