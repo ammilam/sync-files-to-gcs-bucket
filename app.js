@@ -22,6 +22,27 @@ const secret = args.secret
 // used to determine the name of the file being ran
 const exe = filename.match(/.*\.js/) ? `node ${filename}` : filename;
 
+// error handling for path when referencing local directory
+if (path === "./") {
+  console.log(`
+      error on: ${path}
+      referencing the current working directory without an explicit file,
+      or sub directory designation is not supported
+      `)
+  process.exit(1)
+} else if (path.length > 1) {
+  path.forEach(p => {
+    if (p === "./") {
+      console.log(`
+      error on: ${path}
+      referencing the current working directory without an explicit file,
+      or sub directory designation is not supported
+      `)
+      process.exit(1)
+    }
+  })
+}
+
 // ensure proper flags are passed in at runtime
 if ((type === "cloud-storage" && !secret) && (!path || !bucket)) {
   console.error(`
