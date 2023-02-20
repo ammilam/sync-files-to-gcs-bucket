@@ -37,5 +37,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ github.event.release }}
+          tags: ${{ github.event.client_payload.release }}
           labels: ${{ steps.meta.outputs.labels }}
