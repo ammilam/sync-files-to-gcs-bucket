@@ -56,4 +56,11 @@ jobs:
         tag: latest
         overwrite: true
         file_glob: true
+    
+    - name: Repository Dispatch
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        event-type: release-output
+        release: ${{ steps.tag_version.outputs.new_tag }}
   
