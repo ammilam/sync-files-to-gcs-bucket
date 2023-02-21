@@ -60,7 +60,7 @@ const auth = require("./src/google-auth/auth")
 
 // function to upload file to a bucket
 async function upload(bucket, localPathToFile, keyFile) {
-  const localFileName = localPathToFile.match(/^(\.\/)?([\w-]+\/)*([\w-]+\.\w+|\w+|\.\w+)?$/)[1];
+  const localFileName = localPathToFile.match(/^(\/?[\w.-]+)+([\/\w.-]+)?(\.\w*)?$/)[1];
   const bucketStatus = await metadata.getBucketMetadata(bucket, keyFile);
   const localFileStats = fs.statSync(localPathToFile);
   const fileStatus = await metadata.getFileMetadata(bucket, localPathToFile, localFileName, keyFile);
