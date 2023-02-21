@@ -1,6 +1,6 @@
 # Sync To GCP
 
-This repo is contains source code for a commandline utility that either monitors local or nfs filesystems for changes by interval based polling, or filesystem events depending on system architecture. Currently, this tool supports syncing a collection of files or contents of directories to a Google Cloud Storage Bucket, or an individual file's contents to a Google Secret Manager Secret as a new version. This tool will only sync changes when differences are detected between the copy in GCP and the local copy.
+This repo contains source code for a commandline utility that either monitors local or nfs filesystems for changes by interval based polling, or filesystem events depending on system architecture. Currently, this tool supports syncing a collection of files or contents of directories to a Google Cloud Storage Bucket, or an individual file's contents to a Google Secret Manager Secret as a new version. This tool will only sync changes when differences are detected between the copy in GCP and the local copy.
 
 ## Prerequisites
 
