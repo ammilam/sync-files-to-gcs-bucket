@@ -74,8 +74,10 @@ When syncing to a Google Secret Manager Secret, the following flags are supporte
 ```bash
 # login via application default credentials (or get a service account.json key)
 gcloud auth application-default login
+
 # copy json key file to the current working directory
 cp /Users/a-user/.config/gcloud/application_default_credentials.json ./account.json
+
 # run the container
 docker run \
   --volume $PWD:/mount \
@@ -88,8 +90,6 @@ docker run \
 ## Helm
 
 In order to get started deploying this solution via helm, you will need to provide credentials for the pod to work with. The helm chart, which can be pulled from the [ammilam helm chart repo](https://ammilam.github.io/), supports ingesting GCP credentials from a vault agent side car container, or by having a kubernetes secret with a static account.json key present in the secret data for reference.
-
-Helm Chart Source: https://github.com/ammilam/helm-charts/sync-to-gcp
 
 >values.yaml
 
@@ -122,6 +122,10 @@ Once values.yaml has been configured, install the chart.
 ```bash
 # add the ammilam helm repo
 helm repo add ammilam https://ammilam.github.io/helm-charts/
+
 # install the helm chart using the values.yaml file
 helm upgrade --install sync-to-gcp ammilam/sync-to-gcp -f values.yaml
 ```
+
+Helm Chart Source: https://github.com/ammilam/helm-charts/sync-to-gcp
+Helm Chart Repo: https://ammilam.github.io/helm-charts/
