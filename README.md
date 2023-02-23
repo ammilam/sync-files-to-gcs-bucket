@@ -68,3 +68,59 @@ When syncing to a Google Secret Manager Secret, the following flags are supporte
 # only accepts files, not folders
 ./sync-to-gcp --path=./path/to/cert.pem --secret=private-key --project=a-gcp-project-1234
 ```
+
+## Running In Docker
+
+```bash
+# login via application default credentials (or get a service account.json key)
+gcloud auth application-default login
+# copy json key file to the current working directory
+cp /Users/a-user/.config/gcloud/application_default_credentials.json ./account.json
+# run the container
+docker run \
+  --volume $PWD:/mount \
+  --detach \
+  --env GOOGLE_APPLICATION_CREDENTIALS=/mount/account.json \
+  ghcr.io/ammilam/sync-to-gcp:latest \
+  "./sync-to-gcp --path=./mount/path/to/file.txt --bucket=a-gcs-bucket --interval=300"
+```
+
+## Helm
+
+In order to get started deploying this solution via helm, you will need to provide credentials for the pod to work with. The helm chart, which can be pulled from the [ammilam helm chart repo](https://ammilam.github.io/), supports ingesting GCP credentials from a vault agent side car container, or by having a kubernetes secret with a static account.json key present in the secret data for reference.
+
+Helm Chart Source: https://github.com/ammilam/helm-charts/sync-to-gcp
+
+>values.yaml
+
+```yaml
+# command to run at startup
+command: |-
+  ./sync-to-gcp --path=./test/test.txt --bucket=test-bucket-1234
+# used to mount a gcp service account json key to the pod
+gcp_credentials:
+  # where the mount the gcp service account json key in the pod
+  mount_path: /credentials
+  key_file_name: account.json
+
+  # used for static service account json file mounted as a k8s secret, this is not necessary when using vault
+  k8s_secret_service_account_json: "gcp-service-account-k8s-secret"
+
+  # if vault is available with approle auth method and roleset integration to gcp
+  # will dynamically mount and rotate service account json file to the pod
+  vault:
+    enable_vault_agent: false # set to true if using vault agent
+    secret: "a-k8s-secret" # should have role_id="a-vault-role-id" secret_id="a-vault-secret-id" in the secret data
+    vault_addr: https://vault.company.com
+    mount_path: auth/approle
+    vault_namespace: ""    # if using a vault namespace
+    secret_endpoint: /gcp/key/a-gcp-roleset
+```
+
+```bash
+# add the ammilam helm repo
+helm repo add ammilam https://ammilam.github.io/helm-charts/
+# install the helm chart using the values.yaml file
+helm upgrade --install sync-to-gcp ammilam/sync-to-gcp -f values.yaml
+
+```
