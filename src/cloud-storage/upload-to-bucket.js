@@ -1,18 +1,18 @@
 const { Storage } = require('@google-cloud/storage');
 
 
-async function uploadFile(bucketName, localPathToFile, localFileName, keyFile) {
+async function uploadFile(bucketName, localPathToFile, file, keyFile) {
   const storage = new Storage({
     keyFile
   });
-  const options = { destination: localFileName };
+  const options = { destination: file };
   try {
     const [{ metadata: { updated, name, bucket } }] = await storage.bucket(bucketName).upload(localPathToFile, options);
     if (updated) {
-      console.log(`new version "${localPathToFile}" successfully uploaded to ${bucket}`);
+      console.log(`${updated} new version successfully created from "${localPathToFile}" and uploaded to ${bucket} at ${name}`);
     }
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 
