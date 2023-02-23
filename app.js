@@ -1,7 +1,9 @@
 // module used to watch directories
 const chokidar = require("chokidar");
 // module used for slurp in environment variables
-const { config } = require("dotenv");
+const {
+  config
+} = require("dotenv");
 config();
 
 // fs module for interacting with the filesystem
@@ -15,6 +17,7 @@ const args = require('yargs').argv;
 const path = args.path
 const project = args.project
 const bucket = args.bucket
+const bucketPath = args.bucket_path
 const interval = args.interval
 const type = args.type || "cloud-storage";
 const secret = args.secret
@@ -59,60 +62,74 @@ const secretManager = require("./src/secret-manager/add-secret-version")
 const auth = require("./src/google-auth/auth")
 
 // function to upload file to a bucket
-async function upload(bucket, localPathToFile, keyFile) {
-  const localFileName = localPathToFile.match(/^(\/?[\w.-]+)+([\/\w.-]+)?(\.\w*)?$/)[1];
-  const bucketStatus = await metadata.getBucketMetadata(bucket, keyFile);
-  const localFileStats = fs.statSync(localPathToFile);
-  const fileStatus = await metadata.getFileMetadata(bucket, localPathToFile, localFileName, keyFile);
-  if (type === "secret-manager") {
-    if (localFileStats.isDirectory()) {
-      console.error(`
-      when type=secret-manager, you must pass in a single file, not a folder
-      `)
-      process.exit(1)
-    } else {
-      await secretManager.addSecretVersion(project, secret, localPathToFile, keyFile)
-    }
-  } else {
-    // check if gcs bucket exists
-    if (bucketStatus) {
-      // invoke getFileMetadata function to check if the md5 hash for the local file
-      // matches the md5 hash of the object in the gcs bucket
-      if (fileStatus !== "matches") {
-        if (type === "transfer-service") {
-          console.log("this feature is disabled at this time");
-          process.exit(0);
-        }
-        else {
-          cloudStorage.uploadFile(bucket, localPathToFile, localFileName, keyFile);
-        }
+async function upload(localPathToFile) {
+  try {
+    const localFileName = pa.basename(localPathToFile)
+    const bucketStatus = await metadata.getBucketMetadata(bucket, keyFile);
+    const localFileStats = fs.statSync(localPathToFile);
+    const file = !bucketPath ? localFileName : `${bucketPath.replace(/^\/|\/$/g, '')}/${localFileName}`
+    const fileStatus = await metadata.getFileMetadata(bucket, localPathToFile, file, keyFile);
+    if (type === "secret-manager") {
+      if (localFileStats.isDirectory()) {
+        console.error(`
+        when type=secret-manager, you must pass in a single file, not a folder
+        `)
+        process.exit(1)
+      } else {
+        await secretManager.addSecretVersion(project, secret, localPathToFile, keyFile)
       }
     } else {
-      console.log("bucket doesn't exist");
+      // check if gcs bucket exists
+      if (bucketStatus) {
+        // invoke getFileMetadata function to check if the md5 hash for the local file
+        // matches the md5 hash of the object in the gcs bucket
+        if (fileStatus !== "matches") {
+          if (type === "transfer-service") {
+            console.log("this feature is disabled at this time");
+            process.exit(0);
+          } else {
+            cloudStorage.uploadFile(bucket, localPathToFile, file, keyFile);
+          }
+        }
+      } else {
+        console.log("bucket doesn't exist");
+      }
     }
+  } catch (error) {
+    console.error(error)
   }
+
 }
 
 // function that watches paths passed in via the --path flag at runtime
-async function watchDirectory(path, bucket, interval, project, secret, keyFile) {
-  console.log(`Watching ${path} for changes to send to ${bucket||secret}. Polling interval: ${interval ? `${interval} seconds` : 'FS events'}.`);
+async function watchDirectory() {
+  try {
+    console.log(`${new Date} Watching ${path} for changes to send to ${bucket||secret}. Polling interval: ${interval ? `${interval} seconds` : 'FS events'}.`);
+    // initialize chokidar watcher for paths passed into the --path arg
+    const watcher = chokidar.watch(path, {
+      persistent: true,
+      useFsEvents: !interval,
+      usePolling: !!interval,
+      interval: Number(interval),
+    });
 
-  const watcher = chokidar.watch(path, {
-    persistent: true,
-    useFsEvents: !interval,
-    usePolling: !!interval,
-    interval: Number(interval),
-  });
+    // invoke the upload function if an add or change event is detected
+    watcher.on('add', p => upload(p));
+    watcher.on('change', p => upload(p));
+  } catch (error) {
+    console.error(error)
+  }
 
-  watcher.on('change', p => upload(bucket, p, project, secret, keyFile));
-  watcher.on('add', p => upload(bucket, p, project, secret, keyFile));
 }
 
 
 // main function, will auth with google and then invoke the watchDirectory function
 async function main() {
-  // await auth.googleAuth()
-  await watchDirectory(path, bucket, interval, project, secret, keyFile);
+  try {
+    await watchDirectory();
+  } catch (error) {
+    console.error(error)
+  }
 }
 
-main().catch(console.error);
+main()
