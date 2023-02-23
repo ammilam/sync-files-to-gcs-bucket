@@ -31,19 +31,20 @@ Download a binary from the [latest release](https://github.com/ammilam/sync-to-g
 When syncing to Google Cloud Storage, the following flags are supported:
 
 - path => (required) path to the local file or directory to sync to gcp, multiple can be specified
-- bucket => (required) google projectId
-- interval => (optional) sets the interval in seconds to poll the directory for changes
+- bucket => (required) google storage bucket to upload the file(s) to
+- bucket_path => (optional) path on the google storage bucket to upload the file(s) to, defaults to the root of the bucket
+- interval => (optional) sets the interval in seconds to poll the directory for changes, filesystem events are used by default
 - type => (optional) accepts either cloud-storage or secret-manager
 
 ```bash
 ##########################
 ## --type=cloud-storage ##
 ##########################
-# on mac os, no interval is required as it responds to file system events
+# copy to the root of the bucket
 ./sync-to-gcp  --path=./path/to/local/dir --bucket=gcs-bucket-name
 
-# for other os
-./sync-to-gcp --path=./path/to/local/dir --bucket=gcs-bucket-name --interval=900
+# copy to a specific directory on a bucket
+./sync-to-gcp  --path=./path/to/local/dir --bucket=gcs-bucket-name --bucket_path=path/on/bucket
 
 # specifying multiple paths
 ./sync-to-gcp --path=./path/to/local/file.txt --path=./path/to/another/file.txt --bucket=gcs-bucket-name --interval=900
