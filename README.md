@@ -117,10 +117,11 @@ gcp_credentials:
     secret_endpoint: /gcp/key/a-gcp-roleset
 ```
 
+Once values.yaml has been configured, install the chart.
+
 ```bash
 # add the ammilam helm repo
 helm repo add ammilam https://ammilam.github.io/helm-charts/
 # install the helm chart using the values.yaml file
 helm upgrade --install sync-to-gcp ammilam/sync-to-gcp -f values.yaml
-
 ```
