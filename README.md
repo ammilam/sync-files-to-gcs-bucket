@@ -128,4 +128,4 @@ helm upgrade --install sync-to-gcp ammilam/sync-to-gcp -f values.yaml
 ```
 
 - Helm Chart Source: https://github.com/ammilam/helm-charts/sync-to-gcp
-= Helm Chart Repo: https://ammilam.github.io/helm-charts/
+- Helm Chart Repo: https://ammilam.github.io/helm-charts/
