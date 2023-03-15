@@ -96,7 +96,14 @@ In order to get started deploying this solution via helm, you will need to provi
 ```yaml
 # command to run at startup
 command: |-
-  ./sync-to-gcp --path=./test/test.txt --bucket=test-bucket-1234
+  ./sync-to-gcp --path=./data/test.txt --bucket=test-bucket-1234
+  
+# mount a nfs to the pod
+nfs:
+  server: "a-host.company.corp"
+  server_path: "/path/on/server"
+  container_mount_path: "/data"
+  
 # used to mount a gcp service account json key to the pod
 gcp_credentials:
   # where the mount the gcp service account json key in the pod
