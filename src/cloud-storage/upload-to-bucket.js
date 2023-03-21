@@ -12,18 +12,6 @@ async function uploadFile(bucketName, localPathToFile, file, keyFile) {
     destination: file
   };
 
-  let retries = 10
-
-  const retryOptions = {
-    retryOptions: {
-      autoRetry: true,
-      retryDelayMultiplier: 3,
-      totalTimeout: 10000,
-      maxRetryDelay: 1000 * retries,
-      maxRetries: retries,
-    }
-  }
-
   try {
     const [{
       metadata: {
@@ -31,7 +19,7 @@ async function uploadFile(bucketName, localPathToFile, file, keyFile) {
         name,
         bucket
       }
-    }] = await storage.bucket(bucketName).upload(localPathToFile, options, retryOptions);
+    }] = await storage.bucket(bucketName).upload(localPathToFile, options);
     if (updated) {
       console.log(`${updated} new version successfully created from "${localPathToFile}" and uploaded to ${bucket} at ${name}`);
     }
