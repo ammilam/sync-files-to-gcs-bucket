@@ -104,18 +104,27 @@ async function upload(localPathToFile) {
 // function that watches paths passed in via the --path flag at runtime
 async function watchDirectory() {
   try {
-    console.log(`${new Date} Watching ${path} for changes to send to ${bucket||secret}. Polling interval: ${interval ? `${interval} seconds` : 'FS events'}.`);
-    // initialize chokidar watcher for paths passed into the --path arg
-    const watcher = chokidar.watch(path, {
+    const options = {
       persistent: true,
       useFsEvents: !interval,
       usePolling: !!interval,
-      interval: Number(interval),
-    });
+    }
+   
+    if (interval) {
+      options['interval'] = Number(interval) * 1000
+    }
+    
+    console.log("chokidar options:")
+    console.log(options)
+    
+    console.log(`${new Date} Watching ${path} for changes to send to ${bucket||secret}. Polling interval: ${interval ? `${interval} seconds` : 'FS events'}.`);
+    // initialize chokidar watcher for paths passed into the --path arg
+    const watcher = chokidar.watch(path, options);
 
     // invoke the upload function if an add or change event is detected
     watcher.on('add', p => upload(p));
     watcher.on('change', p => upload(p));
+
   } catch (error) {
     console.error(error)
   }
@@ -126,7 +135,7 @@ async function watchDirectory() {
 // main function, will auth with google and then invoke the watchDirectory function
 async function main() {
   try {
-    await watchDirectory();
+    watchDirectory();
   } catch (error) {
     console.error(error)
   }
