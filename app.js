@@ -21,6 +21,7 @@ const bucketPath = args.bucket_path
 const interval = args.interval
 const type = args.type || "cloud-storage";
 const secret = args.secret
+const method = args.method || "copy"
 
 // used to determine the name of the file being ran
 const exe = filename.match(/.*\.js/) ? `node ${filename}` : filename;
@@ -54,6 +55,8 @@ if (type === "secret-manager" && (!secret || !project || !path)) {
   `)
 }
 
+if (!["copy", "move"].includes(method)) console.error(`${method} is not a valid method. Valid methods are copy and move`)
+
 // import local modules
 const cloudStorage = require("./src/cloud-storage/upload-to-bucket");
 const metadata = require("./src/cloud-storage/get-metadata");
@@ -83,12 +86,13 @@ async function upload(localPathToFile) {
       if (bucketStatus) {
         // invoke getFileMetadata function to check if the md5 hash for the local file
         // matches the md5 hash of the object in the gcs bucket
-        if (fileStatus !== "matches") {
+        if (fileStatus !== "matches" || method === "move") {
           if (type === "transfer-service") {
             console.log("this feature is disabled at this time");
             process.exit(0);
           } else {
             cloudStorage.uploadFile(bucket, localPathToFile, file, keyFile);
+            if (method === "move") fs.unlinkSync(localPathToFile);
           }
         }
       } else {
@@ -109,15 +113,15 @@ async function watchDirectory() {
       useFsEvents: !interval,
       usePolling: !!interval,
     }
-   
+
     if (interval) {
       options['interval'] = Number(interval) * 1000
     }
-    
+
     console.log("chokidar options:")
     console.log(options)
-    
-    console.log(`${new Date} Watching ${path} for changes to send to ${bucket||secret}. Polling interval: ${interval ? `${interval} seconds` : 'FS events'}.`);
+
+    console.log(`${new Date} Watching ${path} for changes to send to ${bucket || secret}. Polling interval: ${interval ? `${interval} seconds` : 'FS events'}.`);
     // initialize chokidar watcher for paths passed into the --path arg
     const watcher = chokidar.watch(path, options);
 
