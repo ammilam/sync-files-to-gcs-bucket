@@ -23,7 +23,7 @@ async function uploadFile(bucketName, localPathToFile, file, keyFile, method) {
       }
     }] = await storage.bucket(bucketName).upload(localPathToFile, options).then(async () => {
       if (method === "move") {
-        const exists = await metadata.checkIfFileExists(bucketName, file);
+        const [exists] = await storage.bucket(bucketName).file(file).exists()
         if (exists) {
           fs.unlinkSync(localPathToFile);
         }
