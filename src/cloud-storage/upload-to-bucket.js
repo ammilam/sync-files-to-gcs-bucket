@@ -3,7 +3,6 @@ const {
 } = require('@google-cloud/storage');
 
 const fs = require("fs");
-const metadata = require("./get-metadata");
 
 async function uploadFile(bucketName, localPathToFile, file, keyFile, method) {
   const storage = new Storage({
@@ -15,23 +14,16 @@ async function uploadFile(bucketName, localPathToFile, file, keyFile, method) {
   };
 
   try {
-    const [{
-      metadata: {
-        updated,
-        name,
-        bucket
-      }
-    }] = await storage.bucket(bucketName).upload(localPathToFile, options).then(() => {
-      if (method === "move") {
-        const [exists] = storage.bucket(bucketName).file(file).exists()
-        if (exists) {
+    await storage.bucket(bucketName).upload(localPathToFile, options);
+    const [exists] = await storage.bucket(bucketName).file(file).exists()
+    if (exists) {
+      const [{ updated, name, bucket }] = await storage.bucket(bucketName).file(file).getMetadata();
+      if (updated) {
+        console.log(`${updated} new version successfully created from "${localPathToFile}" and uploaded to ${bucket} at ${name}`);
+        if (method === "move") {
           fs.unlinkSync(localPathToFile);
         }
       }
-    })
-
-    if (updated) {
-      console.log(`${updated} new version successfully created from "${localPathToFile}" and uploaded to ${bucket} at ${name}`);
     }
   } catch (error) {
     console.error(error);
