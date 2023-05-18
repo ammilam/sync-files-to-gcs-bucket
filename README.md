@@ -35,6 +35,7 @@ When syncing to Google Cloud Storage, the following flags are supported:
 - bucket_path => (optional) path on the google storage bucket to upload the file(s) to, defaults to the root of the bucket
 - interval => (optional) sets the interval in seconds to poll the directory for changes, filesystem events are used by default
 - type => (optional) accepts either cloud-storage or secret-manager
+- method => (optional) sets if the file is moved or copied to gcs, accepts `move` and `copy`, defaults to copy
 
 ```bash
 ##########################
@@ -48,6 +49,9 @@ When syncing to Google Cloud Storage, the following flags are supported:
 
 # specifying multiple paths
 ./sync-to-gcp --path=./path/to/local/file.txt --path=./path/to/another/file.txt --bucket=gcs-bucket-name --interval=900
+
+# moving a file
+./sync-to-gcp --path=./path/to/local/file.txt --bucket=gcs-bucket-name --interval=900 --method=move
 
 ```
 
