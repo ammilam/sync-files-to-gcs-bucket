@@ -91,9 +91,7 @@ async function upload(localPathToFile) {
             console.log("this feature is disabled at this time");
             process.exit(0);
           } else {
-            await cloudStorage.uploadFile(bucket, localPathToFile, file, keyFile).then(() => {
-              if (method === "move") fs.unlinkSync(localPathToFile);
-            });
+            await cloudStorage.uploadFile(bucket, localPathToFile, file, keyFile, method)
           }
         }
       } else {
