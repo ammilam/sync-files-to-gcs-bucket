@@ -8,16 +8,16 @@
   "author": "Andrew Milam",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/secret-manager": "^4.2.0",
-    "@google-cloud/storage": "^6.9.0",
-    "@google-cloud/storage-transfer": "^2.2.1",
-    "chokidar": "^3.5.3",
-    "dotenv": "^16.0.3",
+    "@google-cloud/secret-manager": "^4.2.2",
+    "@google-cloud/storage": "^6.12.0",
+    "@google-cloud/storage-transfer": "^2.4.0",
+    "chokidar": "^3.6.0",
+    "dotenv": "^16.4.5",
     "fs": "^0.0.1-security",
-    "google-auth-library": "^8.7.0",
+    "google-auth-library": "^8.9.0",
     "path": "^0.12.7",
-    "pkg": "^5.8.0",
-    "yargs": "^17.6.2"
+    "pkg": "^5.8.1",
+    "yargs": "^17.7.2"
   },
   "pkg": {
     "scripts": "./src/*.js",
